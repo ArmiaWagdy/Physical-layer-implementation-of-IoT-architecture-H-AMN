@@ -1,0 +1,29 @@
+#include "Slave_Controller.h"
+#include <SoftwareSerial.h>
+
+Router Slave;
+unsigned char start_delimeter;
+unsigned char length_of_frame;
+unsigned char data[57];
+
+void setup()
+  {
+  Serial.begin(9600);
+  pinMode(13,OUTPUT);
+}
+
+void loop()
+{
+   if(Serial.available() > 2)
+    {
+      start_delimeter = Serial.read();
+      if(start_delimeter == 0xFF)
+      {
+        length_of_frame = Serial.read();
+        data[0] = length_of_frame;
+        while(Serial.available() != length_of_frame);    //wait for data
+        Slave.get_data(length_of_frame);
+        Slave.process_data();
+      }
+    }
+}
